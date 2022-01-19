@@ -1,0 +1,109 @@
+
+5. 문성훈
+이메일 : moon9342@gmail.com
+=======================================
+Python + Database(MySQL) + Web Programming(Django)
+
+Python
+
+-----
+
+Python 특징
+
+1990년도에 개발되었어요!
+처음에는 교육용 목적으로 만들어진 언어.
+쉽게 프로그램에 적응할 수 있도록 디자인된 프로그래밍 언어
+=> 자료구조, 데이터 핸들링이 쉬워요!
+=> 시대의 흐름에 따라서 데이터 분석, 처리 , AI쪽에 적합한
+     언어로 각광.
+우리가 많이 공부하는 언어
+C계열(C, C++, C#) => 하드웨어에 의존적인 프로그래밍이 가능
+                              성능을 최대한 뽑아낼수 있어요!
+Java => 객체지향 언어. 유지보수에 특화. 구현하기기 쉽지
+            않아요!
+Python => 데이터쪽에 특화되어 있는 언어.
+
+1. 러닝커브가 shallow : 배우기가 쉬워요!
+2. 무료로 사용이 가능
+3. 가독성이 높은 코드
+4. 다양한 분야에 이용이 가능. 하지만 데이터 처리쪽에 치중.
+
+==========================
+
+Python 개발환경 설정 - 3가지로 나누어서 설명.
+1. 사용하는 컴퓨터에 python 3.8을 설치
+   통합개발환경(IDE)을 설치해서 프로그램을 작성
+   여러가지 IDE가 존재해요. 가장 흔하게 많이 사용하는게
+   Visual Studio Code(무료), PyCharm(유료,무료)를 많이 이용해요.
+   우리는 PyCharm을 이용(유료-Trial version)
+   Professional version(유료-Trial) 기본적으로 1달 무료
+   - 4개월 무료 쿠폰(이벤트성 - 링크가 존재하면 누구나)
+   - 교육용 라이센스를 이용하면 1년 무료
+     (학교이메일 : korea.ac.kr)을 아직도 사용할 수 있으면
+
+2. Anaconda 환경에서 Jupyter Notebook을 이용
+   Anaconda : Python으로 데이터분석쪽 작업을 쉽게하기위한
+                   개발환경
+                   가상환경을 만들어서 사용.
+                   내가 파이썬으로 프로그램을 개발하고 싶어요!
+                   - 일반 파이썬 프로그램 
+                   - Web Program
+                   - 데이터분석 프로그램
+                  각 프로그램마다 사용하는 라이브러리가 달라져요
+                  개발환경이 제각각...
+    1. Anaconda Prompt를 실행
+    2. 기본적으로 base 가상환경을 사용할 수 있어요!
+    3. 우리가 사용할 가상환경을 하나 새롭게 만들꺼예요!
+        conda create -n data_env python=3.8 openssl
+    4. 현재 존재하는 가상환경의 list를 살펴보아요!
+        conda info --envs 
+    5. 방금 생성한 가상환경으로 전환
+        conda activate data_env
+    6. 현재 가상환경(data_env)에 필요한 라이브러리를 설치
+       conda install nb_conda
+    7. Python은 이미 data_env 가상환경안에 설치되어 있으니
+       IDE만 준비하면 되요 => Web 기반의 Jupyter Notebook을 사용
+       Jupyter Notebook을 사용하기 위한 환경을 설정해야 해요!
+       환경설정파일을 생성해서 내용을 수정하면 되요!
+       jupyter notebook --generate-config
+       내용을 수정하고 파일을 닫아요!
+   8. IDE(jupyter notebook)을 실행시켜 보아요!
+       jupyter notebook
+   9. jupyter notebook의 파일은 확장자가 .ipynb 를 가져요! 이건
+      순수 python파일이 아니라 jupyter notebook에서만 사용하는 파일입니다.
+      순수 python파일은 확장자가 .py로 붙게됩니다.
+   10. jupyter notebook의 기본 사용법(a,b,dd,ctrl+enter)정도는 기억해야 해요!
+
+3. jupyter notebook은 다 좋은데..불편한 점이 있어요!
+   web 기반의 IDE이다 보니 assist와 같은 기능이 잘 안되요!
+   assist는 자동완성기능을 의미
+   하지만 PyCharm은 독립적인 Tool이기 때문에 assist기능이 좋아요!
+   PyCharm과 Anaconda Jupyter Notebook을 같이 사용.
+   
+===========================================
+
+python의 특징,장점 정리
+
+1. 상대적으로 쉬운언어..(처음배울때는..)
+2. jupyter notebook을 이용하면 interactive programming 이 가능.
+3. 데이터분석 library가 아주 많아요!
+4. Open Source(무료)
+5. 데이터분석
+    - R (통계를 잘 모르는 사람도 통계적 프로그램을 쉽게 만들수 있도록 해주는)
+      데이터분석에 최적화 되어있고 다른 컴퓨터 시스템에 연동시키기는 좋지
+      않아요.
+    - Python
+      분석기능 + 프로그래밍 기능.
+6. 현재 가장 인기있는 언어...(데이터쪽에서)
+7. python은 하위 호환성이 없어요!
+   (python 2.x와 3.x)
+
+
+
+
+
+
+
+
+
+
