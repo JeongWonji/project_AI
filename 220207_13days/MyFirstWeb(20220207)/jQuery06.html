@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="js/jQuery06.js"></script>
+    <link rel="stylesheet" href="css/jQuery06.css">
+</head>
+<body>
+    <ul class="myStyle">
+        <li>아이유</li>
+        <!-- on+event명 : event 속성을 이용해서 event처리
+             이방식은 순수 JavaScript Event처리 방식 => this를 사용 못해요!
+             만약 this를 이용하고 싶으면
+             jQuery Event 처리 방식으로 Event를 처리해야 해요!
+        -->
+        <li ondblclick="my_func2()">김연아</li>
+        <li>홍길동</li>
+    </ul>
+    <input type="text" value="입력하세요!" disabled="disabled">
+    <input type="button" value="클릭클릭!"
+           onclick="my_func()">
+</body>
+</html>

@@ -1,0 +1,9 @@
+
+/* CSS 역시 selector를 이용해서 Element를 찾을 수 있어요! */
+
+.myStyle {
+    color: red;
+    background-color: yellow;
+    width: 300px;
+    height: 200px;
+}
