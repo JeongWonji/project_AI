@@ -1,0 +1,98 @@
+<!--
+HTML(HyperText Markup Language)
+Markup 언어 => 태그언어.
+정해져 있는 tag를 이용해 내용을 구성.
+1999년 12월 HTML 4.01을 마지막 버전으로 더 이상 버전업을 하지 않겠다고 선언(W3C)
+결국은 2014년 버전업이 되요! => HTML5 (현재 사용하고 있는 HTML버전)
+HTML5는 크게 3가지로 구성되어 있어요
+1. HTML Element
+2. CSS 3
+3. JavaScript
+당연히 HTML부터 알아야 해요! Markup언어라서 배우기가 아주 쉬워요!
+HTML언어는 일단 Element로 구성되요! Element는 Tag + 내용
+<!DOCTYPE html> => 문서의 형태를 알려주는 역할
+HTML은 크게 2부분으로 나누어져요! <head> ~ </head>
+                              <body> ~ </body>
+전체 HTML은 <html> ~ </html>으로 묶여요!
+코드를 보면 알 수 있듯이 이런 Element들은 포함관계를 가질 수 있어요!
+포함관계에 들어가지 않는 Element들도 존재!
+<head> ~ </head>는 문서의 설정을 잡아요!
+<body> ~ </body>는 문서의 내용을 표현해요!
+
+이렇게 문서를 하나 만들었어요..(test.html)
+1.(내장) Web Server에게 우리 프로젝트 존재를 알려줘야 해요! => configure
+2. Web Server가 우리 Project를 인식한 상태에서 기동해야 해요!
+3. Web Client(Brower)를 실행켜요!
+4. URL(protocol://IP:Port/파일명)을 이용해서 Web Client가 Web Server에
+   Request를 보내요!
+5. Web Server가 Reqeust에 대한 처리를 한 후 Web Client에게 Response를 보내요!
+6. Web Client가 Response를 해석해서 Browser에 Rendering.
+
+Element(요소, 엘리먼트), Tag(태그), Attribute(어트리뷰트, 속성)
+정해져있는 Element(태그, 속성)만 이용할 수 있어요!
+<html> => HTML문서는 반드시 이 Element로 감싸져야 해요!
+<head> => HTML문서의 설정을 담당. 대표적으로 charset설정(유니코드로 설정)
+<body> => HTML문서의 내용을 표현.
+<a> => 앵커. 하이퍼링크(클릭가능한 형태)를 만들어주는 Element
+    => 클릭했을 때 request를 어떻게 전송할건지를 설정해주는 attribute가 존재
+<img> => 그림을 표현할 때  사용하는 Element
+      => 닫는태그가 존재하지 않아요!
+      => 이미지를 표현할 때 url은 src attribute를 이용.
+<br>  => 한 줄을 띄는 Element
+<table> => 2차원 테이블형태로 데이터를 표현하기 위해서 사용!
+<ul>, <li> => 목록을 만드는 Element
+이런류의 Element가 상당히 많아요! 어떤 Element를 사용하면 화면에
+어떻게 나오는지를 잘 알아두면 되요!
+
+attribute에 대해서 알아야 해요! attribute(속성)도 당연히 정해져 있어요!
+
+사용자 입력 양식(흔히 폼이라고 표현해요!)
+- 버튼, 라디어버튼, 입력상자, 셀렉트박스, progressbar
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>아이고 여기가 타이틀 이예요!</title>
+    </head>
+    <body>
+    <a href="http://www.naver.com">네이버로 가기</a>
+    <br>
+    <!-- author라는 attribute는 존재하지 않아요!   -->
+    <!-- HTML은 문법이 잘못되어도 browser가 알아서 처리해요!  -->
+    <!-- 문법이 좀 틀려도 괜찮나요??? 아니요.이런거는 사용하면 안되요! -->
+    <!-- 하지만 나는 태그에 추가적인 정보를 포함시키고 싶어요!   -->
+    <!-- 사용자 정의 attribute를 이용하면 되요! data- 시작해야 해요!   -->
+    <img src="img/lion.png" data-author="IU">
+    <br><br>
+    <table>
+        <thead>
+        <!-- 컬럼에 대한 정의-->
+            <th>이름</th>
+            <th>학과</th>
+            <th>주소</th>
+        </thead>
+        <tbody>
+        <!-- 각 컬럼에 대한 데이터 -->
+            <tr>
+                <td>홍길동</td>
+                <td>건축학과</td>
+                <td>서울</td>
+            </tr>
+            <tr>
+                <td>아이유</td>
+                <td>영문과</td>
+                <td>인천</td>
+            </tr>
+        </tbody>
+    </table>
+    <br><br>
+    <ul>     <!-- Unordered List-->
+        <li>서울</li>
+        <li>인천</li>
+        <li>대구</li>
+    </ul>
+    <br><br>
+    <input type="button" value="여기를 클릭하세요!!">
+    </body>
+</html>
