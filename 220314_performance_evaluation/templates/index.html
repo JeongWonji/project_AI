@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block html_header %}
+
+
+<style>
+@import url(https://fonts.googleapis.com/css?family=Pacifico);
+
+@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css";
+#container {
+  min-width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  margin-top: 40px;
+}
+
+#outer-container {
+  max-width: 100%;
+  min-width: 100%;
+  margin: 0 auto;
+}
+
+#outer-container .controls {
+  display: table;
+  margin: 0 auto;
+
+}
+
+#outer-container button {
+    margin: 0 auto;
+    margin-bottom: 40px;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    border: 1px solid transparent;
+    padding: .375rem 31.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+}
+#parentContainer {
+  min-width: 320px;
+  max-width: 800px;
+}
+
+#play-controls {
+  position: absolute;
+  left: 100px;
+  top: 350px;
+}
+
+#play-pause-button {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border: 1px solid silver;
+  border-radius: 3px;
+  background: #f8f8f8;
+
+}
+
+#play-range {
+  transform: translateY(2.5px);
+}
+
+
+</style>
+
+
+
+
+{% endblock %}
+
+
+
+{% block html_body %}
+
+      <main class="px-3">
+    <br><br><br><br><br><br><br><br><br><br>
+          <center><h1><p style="font-size: 30px" style="background-color:#800F0F;" class="lead">
+        {% if request.user.is_authenticated %}
+        {{ request.user.username }} 님 환영합니다.
+        {% else %}
+        로그인이 필요합니다.
+        {%  endif %}
+    </p></h1></center>
+  </main>
+
+{% endblock %}
