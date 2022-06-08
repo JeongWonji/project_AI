@@ -1,0 +1,119 @@
+import os
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tqdm.notebook import tqdm
+from PIL import Image
+import io
+
+
+############ Tensorflow에서 제공된 Type별 Feature 생성 코드 ############
+
+def _bytes_feature(value):
+    # string / byte 타입을 받아서 byte list를 리턴.
+    if isinstance(value, type(tf.constant(0))):
+        value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+def _float_feature(value):
+    # float / double 타입을 받아서 float list를 리턴
+    return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
+
+def _floatarray_feature(array):
+    """Returns a float_list from a float / double."""
+    return tf.train.Feature(float_list=tf.train.FloatList(value=array))
+
+def _int64_feature(value):
+    # bool / enum / int / uint 타입을 받아서 int64 list를 리턴
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
+############ DataFrame 생성 ############        
+    
+src = './data/kaggle_cat_dog/train/'
+
+df = pd.DataFrame(os.listdir(src),
+                  columns=['filename'])
+
+df['label'] = ~df['filename'].str.contains('cat')
+
+df = df.astype({'label': 'int'})
+
+df['filename']  = df['filename'].map(lambda x : src + x)
+
+display(df)
+
+############ TFRecord 생성 함수 정의 ############        
+        
+def to_tfrecords(id_list, label_list, tfrecords_name):
+    # id_list : 이미지파일명을 가지고 있는 list
+    # label_list : 이미지파일의 label을 가지고 있는 list
+    # tfrecords_name : tfrecord의 이름(train,validation 구별을 위해필요)
+    
+    print("Converting 시작 (" + os.path.join(tfrecords_name + '.tfrecords') + ' 파일생성)')
+    # GZIP으로 압축한 TFRecord 생성하기 위한 option
+    options = tf.io.TFRecordOptions(compression_type = 'GZIP')
+        
+    with tf.io.TFRecordWriter(path=os.path.join(tfrecords_name + '.tfrecords'), 
+                              options=options) as writer:
+        
+        # tqdm은 반복문의 진행상황을 progressbar를 보여주는 모듈
+        # tqdm 파라미터
+
+        # iterable : 반복자 객체
+        # desc : 진행바 앞에 텍스트 출력
+        # total : int, 전체 반복량
+        # leave : bool, default로 True. (진행상태 잔상이 남음)
+        # ncols : 진행바 컬럼길이. width 값으로 pixel 단위로 보임.
+        # mininterval, maxinterval : 업데이트 주기. 
+        #                            기본은 mininterval=0.1 sec, maxinterval=10 sec
+        # miniters : Minimum progress display update interval, in iterations.
+        # ascii : True로 하면 '#'문자로 진행바가 표시됨.
+        # initial : 진행 시작값. 기본은 0
+        # bar_format : str
+
+        # tqdm method
+        # clear() : 삭제
+        # refresh() : 강제 갱신
+        
+        for id_, label_ in tqdm(zip(id_list, label_list), 
+                                total=len(id_list), 
+                                position=0, 
+                                leave=True):
+            image_path = id_
+            
+            # TFRecord를 생성하는 시점에 resize를 할수도 있고 TFRecord를 읽어서 DataSet을 만들때
+            # resize를 할 수 도 있다. 
+            # resize 된 이미지를 저장할 경우 처리에 주의해야 한다. 
+            # 잘못하는 경우 이미지 데이터가 깨져서 저장될 수 있음.
+            # 일반적으로 원본을 저장하고 사용할 때 resize해서 사용하는것이 일반적임.
+            
+            # 원본 이미지를 resize하지 않고 TFRecord로 저장.
+            _binary_image = tf.io.read_file(image_path)
+            
+            # Example 객체 생성
+            # 파이썬의 문자열은 모두 unicode. unicode 문자열을 byte배열로 바꾸는 함수가 encode()
+            # 각 type에 맞게 Feature 객체 생성 후 dict 생성. 
+            # 이 dict를 이용해 Feauture 객체 생성 후 Example 객체 생성.
+            string_set = tf.train.Example(features=tf.train.Features(feature={
+                'image_raw': _bytes_feature(_binary_image),
+                'label': _int64_feature(label_)                
+            }))
+
+            # 만들어진 Example 객체를 binary string으로 변환한 후 파일에 저장
+            writer.write(string_set.SerializeToString())    
+            
+
+############ 데이터 분리 및 TFRecord 생성 함수 호출 ############        
+
+train_ids, val_ids, train_labels, val_labels = \
+    train_test_split(df['filename'], 
+                     df['label'], 
+                     test_size=0.2, 
+                     random_state=40, 
+                     shuffle=True)
+
+
+to_tfrecords(train_ids, train_labels, './cat_dog_train')
+to_tfrecords(val_ids, val_labels, './cat_dog_valid')

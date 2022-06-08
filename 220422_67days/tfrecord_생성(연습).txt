@@ -1,0 +1,85 @@
+import warnings
+import numpy as np
+from PIL import Image
+import tensorflow as tf
+import matplotlib.pyplot as plt
+import io
+
+warnings.filterwarnings(action='ignore')
+
+filenames = tf.io.gfile.glob('./data/kaggle_cat_dog/train/*.jpg')
+
+print(filenames[0], filenames[1])
+
+# filenames[0], filenames[1] 파일의 shape과 이미지를 먼저 살펴보자.
+fig = plt.figure()
+
+axes = []
+
+for i in range(4):
+    axes.append(fig.add_subplot(2,2,i+1))
+    
+img = Image.open(filenames[0])
+pixel = np.array(img)
+axes[0].imshow(pixel)
+
+img = Image.open(filenames[1])
+pixel = np.array(img)
+axes[1].imshow(pixel)
+
+
+print('image의 shape : {}'.format(pixel.shape))
+
+############ Tensorflow에서 제공된 Type별 Feature 생성 코드 ############
+
+def _bytes_feature(value):
+    # string / byte 타입을 받아서 byte list를 리턴.
+    if isinstance(value, type(tf.constant(0))):
+        value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+def _float_feature(value):
+    # float / double 타입을 받아서 float list를 리턴
+    return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
+
+def _floatarray_feature(array):
+    # float / double 타입을 받아서 float list를 리턴
+    return tf.train.Feature(float_list=tf.train.FloatList(value=array))
+
+def _int64_feature(value):
+    # bool / enum / int / uint 타입을 받아서 int64 list를 리턴
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
+# tf.Example 객체 생성
+def to_example(filename):
+    image_string = tf.io.read_file(filename)    
+    
+    # './data/kaggle_cat_dog/train/cat.12406.jpg'
+    label = (filename.split('/')[-1]).split('.')[0] == 'dog'
+    # cat이면 False(0), dog이면 True(1)
+       
+    shape = tf.image.decode_jpeg(image_string).shape
+
+    feature = {
+        'image/height': _int64_feature(shape[0]),
+        'image/width': _int64_feature(shape[1]),
+        'image/channel': _int64_feature(shape[2]),
+        'image/label': _int64_feature(label),
+        'image/image_raw': _bytes_feature(image_string),
+        'image/filename': _bytes_feature(filename.encode())
+    }
+    return tf.train.Example(features=tf.train.Features(feature=feature))
+
+# TFRecord 파일 생성
+tfrecords_path = './TFRecord_Write_Read_Example.tfrecords'
+
+with tf.io.TFRecordWriter(tfrecords_path) as writer:
+    try:
+        # print(to_example(filenames[0]).SerializeToString())
+        tf_example = to_example(filenames[0])
+        writer.write(tf_example.SerializeToString())
+        tf_example = to_example(filenames[1])
+        writer.write(tf_example.SerializeToString())        
+    except:
+        print(f'fail: {filename}')
