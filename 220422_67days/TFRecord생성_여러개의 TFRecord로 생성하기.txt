@@ -1,0 +1,124 @@
+import os
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tqdm.notebook import tqdm
+
+import warnings
+
+warnings.filterwarnings(action='ignore')
+
+############ Tensorflow에서 제공된 Type별 Feature 생성 코드 ############
+
+def _bytes_feature(value):
+    # string / byte 타입을 받아서 byte list를 리턴.
+    if isinstance(value, type(tf.constant(0))):
+        value = value.numpy() # BytesList won't unpack a string from an EagerTensor.
+    return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
+
+def _float_feature(value):
+    # float / double 타입을 받아서 float list를 리턴
+    return tf.train.Feature(float_list=tf.train.FloatList(value=[value]))
+
+def _floatarray_feature(array):
+    # float / double 타입을 받아서 float list를 리턴
+    return tf.train.Feature(float_list=tf.train.FloatList(value=array))
+
+def _int64_feature(value):
+    # bool / enum / int / uint 타입을 받아서 int64 list를 리턴
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
+
+
+def to_example(filename):
+    # TFRecord를 생성하는 시점에 resize를 할수도 있고 TFRecord를 읽어서 DataSet을 만들때
+    # resize를 할 수 도 있다. 
+    # resize 된 이미지를 저장할 경우 처리에 주의해야 한다. 
+    # 잘못하는 경우 이미지 데이터가 깨져서 저장될 수 있음.
+    # 일반적으로 원본을 저장하고 사용할 때 resize해서 사용하는것이 일반적임.
+            
+    # 원본 이미지를 resize하지 않고 TFRecord로 저장.
+    image_string = tf.io.read_file(filename)    
+    
+    # './data/kaggle_cat_dog/train/cat.12406.jpg'
+    label = (filename.split('/')[-1]).split('.')[0] == 'dog'
+    # cat이면 False(0), dog이면 True(1)
+    
+    shape = tf.image.decode_jpeg(image_string).shape
+
+    feature = {
+        'image/height': _int64_feature(shape[0]),
+        'image/width': _int64_feature(shape[1]),
+        'image/channel': _int64_feature(shape[2]),
+        'image/label': _int64_feature(label),
+        'image/image_raw': _bytes_feature(image_string),
+        'image/filename': _bytes_feature(filename.encode())        
+    }
+    
+    # Example 객체 생성
+    # 파이썬의 문자열은 모두 unicode. unicode 문자열을 byte배열로 바꾸는 함수가 encode()
+    # 각 type에 맞게 Feature 객체 생성 후 dict 생성. 
+    # 이 dict를 이용해 Feauture 객체 생성 후 Example 객체 생성.
+    return tf.train.Example(features=tf.train.Features(feature=feature))
+
+
+def chunkify(filename_list, n):
+    size = len(filename_list) // n
+    start = 0
+    results = []
+    for i in range(n - 1):
+        results.append(filename_list[start:start + size])
+        start += size
+    results.append(filename_list[start:])
+    return results
+
+
+# tqdm은 반복문의 진행상황을 progressbar를 보여주는 모듈
+
+# tqdm 파라미터
+# iterable : 반복자 객체
+# desc : 진행바 앞에 텍스트 출력
+# total : int, 전체 반복량
+# leave : bool, default로 True. (진행상태 잔상이 남음)
+# ncols : 진행바 컬럼길이. width 값으로 pixel 단위로 보임.
+# mininterval, maxinterval : 업데이트 주기. 
+#                            기본은 mininterval=0.1 sec, maxinterval=10 sec
+# miniters : Minimum progress display update interval, in iterations.
+# ascii : True로 하면 '#'문자로 진행바가 표시됨.
+# initial : 진행 시작값. 기본은 0
+# bar_format : str
+
+# tqdm method
+# clear() : 삭제
+# refresh() : 강제 갱신
+        
+def build_tfrecords(total_shards_num, split, filenames):
+    chunks = chunkify(filenames, total_shards_num)
+    failed = 0
+    for i, chunk in tqdm(enumerate(chunks),
+                         total=len(chunks),
+                         position=0,
+                         leave=True):        
+        tfrecords_path = './tfrecords/{}_{}_of_{}.tfrecords'.format(split,
+                                                                    str(i + 1).zfill(4),
+                                                                    str(total_shards_num).zfill(4))
+        # GZIP으로 압축한 TFRecord 생성하기 위한 option
+        # options = tf.io.TFRecordOptions(compression_type='GZIP')
+        
+        # with tf.io.TFRecordWriter(tfrecords_path, options=options) as writer:
+        with tf.io.TFRecordWriter(tfrecords_path) as writer:
+            for filename in chunk:
+                try:
+                    tf_example = to_example(filename)
+                    
+                    # 만들어진 Example 객체를 binary string으로 변환한 후 파일에 저장
+                    writer.write(tf_example.SerializeToString())
+                except:
+                    print(f'fail: {filename}')
+    
+    
+os.makedirs('tfrecords', exist_ok=True)
+filenames = tf.io.gfile.glob('./data/kaggle_cat_dog/train/*.jpg')
+
+train_data, valid_data = train_test_split(filenames, train_size=0.8)
+
+build_tfrecords(100, 'train', train_data)
+build_tfrecords(100, 'valid', valid_data)
